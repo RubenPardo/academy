@@ -1,6 +1,7 @@
 
 import 'dart:async';
 
+import 'package:academy/data/model/pokemon_info_model.dart';
 import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_bloc.dart';
 import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_event.dart';
 import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_state.dart';
@@ -9,7 +10,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/utility.dart';
-import '../../../data/model/pokemon_model.dart';
 
 class ListAllPokemonScreen extends StatefulWidget {
   const ListAllPokemonScreen({Key? key}) : super(key: key);

@@ -2,14 +2,9 @@ import 'package:academy/core/utility.dart';
 import 'package:academy/data/model/pokemon_info_model.dart';
 import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_bloc.dart';
 import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_event.dart';
-import 'package:academy/presentation/home/blocs/pokemon_item/pokemon_item_bloc.dart';
-import 'package:academy/presentation/home/blocs/pokemon_item/pokemon_item_event.dart';
-import 'package:academy/presentation/home/blocs/pokemon_item/pokemon_item_state.dart';
-import 'package:academy/shared/shimmer_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../data/model/pokemon_model.dart';
 
 class PokemonItemWidget extends StatefulWidget  {
 
@@ -23,12 +18,12 @@ class PokemonItemWidget extends StatefulWidget  {
 
 class _PokemonItemWidgetState extends State<PokemonItemWidget>{
 
-  final PokemonItemBloc _pokemonItemBloc = PokemonItemBloc();
+
 
   @override
   void initState() {
     super.initState();
-    _pokemonItemBloc.add(PokemonItemFetchData(url:widget.pokemon.url));
+   
   }
 
 
@@ -46,7 +41,7 @@ class _PokemonItemWidgetState extends State<PokemonItemWidget>{
                 alignment: Alignment.centerRight,
                 child: Stack(
                   children: <Widget>[
-                      _buildPokemonInfo(),
+                      _buildPokemon(widget.pokemon),
                       _buildFavoriteButton(),
                   ],
                 ),
@@ -58,25 +53,7 @@ class _PokemonItemWidgetState extends State<PokemonItemWidget>{
 
   }
 
-  Widget _buildPokemonInfo(){
-    return BlocConsumer(
-      bloc: _pokemonItemBloc,
-      builder: (context, state) {
-        if(state is PokemonItemLoadingState){
-          return _buildPokemonInfoLoading();
-        }else if(state is PokemonItemLoadedState){
-          return _buildPokemonInfoLoaded(state.pokemonInfo);
-        }
-        return Center();
 
-      }, 
-      listener: (context, state) {
-        if(state is PokemonItemErrorState){
-            Utility.showSnackBar(context,state.mensaje);
-          }
-      },
-    );
-  }
 
   Widget _buildFavoriteButton() {
   return  Align(
@@ -97,33 +74,8 @@ class _PokemonItemWidgetState extends State<PokemonItemWidget>{
     );
   }
   
-  Widget _buildPokemonInfoLoading() {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        // IMAGEN ------------------------------------------------
-        Container(
-          constraints: const BoxConstraints(maxWidth: 150),
-          child: Image.asset('assets/images/no_image.png',),
-        ),
-        // Info ------------------------------------------------
-        Expanded(
-          child: Column(
-            
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Padding(padding: EdgeInsets.only(right: 24), child: ShimmerLoading(height: 24, borderRadius: 16),),
-              SizedBox(height: 10),
-              Padding(padding: EdgeInsets.only(right: 24), child: ShimmerLoading(height: 48, borderRadius: 8),)
-              
-            ],
-          ),
-        )
-      ],
-    );
-  }
 
-  Widget _buildPokemonInfoLoaded(PokemonInfo pokemonInfo) {
+  Widget _buildPokemon(Pokemon pokemonInfo) {
      return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [

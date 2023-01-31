@@ -5,11 +5,9 @@ import 'package:academy/data/model/pokemon_info_model.dart';
 import '../../core/my_error.dart';
 import 'package:either_dart/either.dart';
 
-import '../model/pokemon_model.dart';
-
 abstract class PokemonRemoteSource {
   Future<Either<MyError, PokemonList>> getPokemonFromServer(int cuantos);
-  Future<Either<MyError, PokemonInfo>> getPokemonInfoFromServer(String url);
+  Future<Either<MyError, Pokemon>> getPokemonInfoFromServer(String url);
 }
 
 
@@ -27,7 +25,14 @@ class PokemonRemoteSourceImpl implements PokemonRemoteSource{
       if (response.statusCode == 200) {
         PokemonList pokemonList = [];
         for(var pokemonData in response.data['results']){
-          pokemonList.add(Pokemon.fromJSON(pokemonData));
+
+          final response2 = await getPokemonInfoFromServer(pokemonData['url']);
+          response2.fold((error) {}, 
+            (pokemon) {
+              pokemonList.add(pokemon);
+            }
+          );
+            
         }
         return Right(pokemonList);
       }
@@ -43,7 +48,7 @@ class PokemonRemoteSourceImpl implements PokemonRemoteSource{
   }
   
   @override
-  Future<Either<MyError, PokemonInfo>> getPokemonInfoFromServer(String url) async{
+  Future<Either<MyError, Pokemon>> getPokemonInfoFromServer(String url) async{
     try{
       final Request request = serviceLocator<Request>();
 
@@ -51,7 +56,7 @@ class PokemonRemoteSourceImpl implements PokemonRemoteSource{
 
       if (response.statusCode == 200) {
         // TODO cambiar
-        return Right( PokemonInfo.fromJson(response.data));
+        return Right( Pokemon.fromJson(response.data));
       }
       return Left(
         MyError(response.data['message']),

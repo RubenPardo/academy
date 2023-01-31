@@ -23,7 +23,28 @@ class Utility{
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   static String capitalize(String string) {
+    if(string.isNotEmpty){
+      
     return "${string[0].toUpperCase()}${string.substring(1).toLowerCase()}";
+    }else{
+      return "";
+    }
+  }
+
+  // quedan mas pero para probar sobra
+  static List<String> pokemonTypes() {
+    return [
+      "",
+      "poison",
+      "flying",
+      "fire",
+      "water",
+      "grass",
+      "rock",
+      "dark",
+      "dragon",
+      "fairy"
+    ];
   }
 
 }

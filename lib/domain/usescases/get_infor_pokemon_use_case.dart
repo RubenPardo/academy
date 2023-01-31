@@ -6,7 +6,7 @@ import 'package:academy/data/model/pokemon_info_model.dart';
 import 'package:either_dart/either.dart';
 import '../repositories/pokemon_repository.dart';
 class GetPokemonInfoFromServer {
-  Future<Either<MyError, PokemonInfo>> getProductsFromServer(String url) {
+  Future<Either<MyError, Pokemon>> getProductsFromServer(String url) {
     return serviceLocator<PokemonRepository>().getPokemonInfoFromServer(url);
   }
 }

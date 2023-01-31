@@ -1,5 +1,5 @@
 import 'package:academy/core/service_locator.dart';
-import 'package:academy/data/model/pokemon_model.dart';
+import 'package:academy/data/model/pokemon_info_model.dart';
 import 'package:academy/domain/usescases/get_pokemon_list_use_case.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'lista_pokemon_event.dart';
@@ -8,16 +8,20 @@ import 'lista_pokemon_state.dart';
 class ListaPokemonBloc extends Bloc<ListaPokemonEvent, ListaPokemonState> {
   ListaPokemonBloc() : super(ListaPokemonInitialState()) {
 
-      PokemonList _pokemonList = []; // para mantener de forma temporal nuestra lista, así podremos añadir nuevos elementos, podriamos hacerlo con una BD interna
+      PokemonList _pokemonListFiltrada = []; // para mantener de forma temporal nuestra lista, así podremos añadir nuevos elementos, podriamos hacerlo con una BD interna
       PokemonList _pokemonListFavoritos = []; // para mantener de forma temporal nuestra lista, así podremos añadir nuevos elementos, podriamos hacerlo con una BD interna
+      PokemonList _pokemonListTodos = []; // tener todos todo el rato
       
-      const int cuantosPokemon = 20; // cuantos pokemon pedir a la api
+
+       String tipo1 = "";
+       String tipo2 = "";
+       int cuantosPokemon = 10; // cuantos pokemon pedir a la api
 
 
       on<ListaPokemonFetchData>(
         (event,emit) async{
           if(event.isRefresh){
-            emit(ListaPokemonRefreshingState(pokemonList:_pokemonList)); // ------------------------------------------------- Empezamos a cargar
+            emit(ListaPokemonRefreshingState(pokemonList:_pokemonListFiltrada)); // ------------------------------------------------- Empezamos a cargar
             _pokemonListFavoritos = [];
           }else{
             emit(ListaPokemonLoadingState()); // ------------------------------------------------- Empezamos a cargar
@@ -29,38 +33,87 @@ class ListaPokemonBloc extends Bloc<ListaPokemonEvent, ListaPokemonState> {
                 emit(ListaPokemonErrorState(mensaje:error.mensaje));// --------------------------- return Error
               }, 
               (pokemonList) {
-                _pokemonList = pokemonList;// ------------ guardamos localmente la lista 
-                emit(ListaPokemonLoadedState(pokemonList: pokemonList, pokemonListFav: _pokemonListFavoritos));// --------------------------- return PokemonList
+                _pokemonListTodos = pokemonList;// ------------ guardamos localmente la lista 
+                _pokemonListFiltrada = _filtrarPokemon(tipo1, tipo2,_pokemonListTodos);
+                emit(ListaPokemonLoadedState(pokemonList: _pokemonListFiltrada, pokemonListFav: _pokemonListFavoritos));// --------------------------- return PokemonList
               }
             );
         }
       );
+      
       on<ListaPokemonAddElement>(
         (event,emit) async{
           // aqui podriamos usar un caso de uso en el caso de que fuera 
           //pillarlo de la BD o de Remoto, en este caso no haria falta
           // HAY MUCHOS para ver que se añaden pedir menos pokemons
-           _pokemonList.add(Pokemon.dummy());
-          emit(ListaPokemonLoadedState(pokemonList: _pokemonList,pokemonListFav: _pokemonListFavoritos));// --------------------------- return PokemonList
+           _pokemonListTodos.add(Pokemon.dummy());
+           _pokemonListFiltrada = _filtrarPokemon(tipo1, tipo2,_pokemonListTodos);
+          emit(ListaPokemonLoadedState(pokemonList: _pokemonListTodos,pokemonListFav: _pokemonListFavoritos));// --------------------------- return PokemonList
         }
       );
 
       on<ListaPokemonAddFav>(
         (event, emit) {
-          print("EVENTO -- añadir a fav: ${event.pokemon.name}");
-          Pokemon pokemon = _pokemonList.firstWhere((element) => element.name == event.pokemon.name);
+         
+          Pokemon pokemon = _pokemonListTodos.firstWhere((element) => element.name == event.pokemon.name);
           if(!pokemon.fav){ // si no estaba en fav lo añadimos
             _pokemonListFavoritos.add(pokemon);
           }else{
             _pokemonListFavoritos.remove(pokemon);
           }
           pokemon.fav = !pokemon.fav; // le cambiamos el flag
-          emit(ListaPokemonLoadedState(pokemonList: _pokemonList,pokemonListFav:_pokemonListFavoritos)); // ---------- return pokemon list
+          _pokemonListFiltrada = _filtrarPokemon(tipo1, tipo2,_pokemonListTodos);
+          emit(ListaPokemonLoadedState(pokemonList: _pokemonListFiltrada,pokemonListFav:_pokemonListFavoritos)); // ---------- return pokemon list
+        },
+      );
+
+      on<ListaPokemonFiltrar>(
+        (event, emit) {
+           tipo1 = event.tipo1;
+           tipo2 = event.tipo2;
+          // deshacemos filtros
+          _pokemonListFiltrada = _filtrarPokemon(tipo1, tipo2,_pokemonListTodos);
+          
+         
+          emit(ListaPokemonLoadedState(pokemonList: _pokemonListFiltrada,pokemonListFav:_pokemonListFavoritos)); // ---------- return pokemon list
         },
       );
 
   }
 
+  List<Pokemon> _filtrarPokemon(String tipo1, String tipo2, List<Pokemon> listaAFiltrar){
+
+    print("FILTRAR $tipo1 y $tipo2");
+    print("FILTRAR se va a filtrar $listaAFiltrar");
+    // si hay un filtro --
+    List<Pokemon> listaFiltrada = listaAFiltrar;
+    if(tipo1 == "" && tipo2 == ""){
+      return listaFiltrada;
+    }else{
+      listaFiltrada = listaFiltrada.where((element){
+        
+        if(tipo1 != "" && tipo2 == ""){
+          // filtrar tipo1 
+            return element.firstPokemonType.toLowerCase() == tipo1;
+          
+          
+        }else if(tipo1 == "" && tipo2 != ""){
+          // filtrar tipo2 
+            return element.secondPokemonType.toLowerCase() == tipo2;
+          
+        }else{
+          // filtrar ambos
+            return element.firstPokemonType.toLowerCase() == tipo1 && element.secondPokemonType.toLowerCase() == tipo2;
+          
+        }
+      
+      
+      
+      }).toList();
+    }
+     print("FILTRAR resultado $listaFiltrada");
+    return listaFiltrada;
+  }
 
 }
 

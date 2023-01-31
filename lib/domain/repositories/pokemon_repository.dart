@@ -2,7 +2,6 @@ import 'package:academy/core/my_error.dart';
 import 'package:academy/core/service_locator.dart';
 import 'package:academy/data/datasource/pokemon_remote_source.dart';
 import 'package:academy/data/model/pokemon_info_model.dart';
-import 'package:academy/data/model/pokemon_model.dart';
 import 'package:either_dart/either.dart';
 
 ///
@@ -14,7 +13,7 @@ import 'package:either_dart/either.dart';
 ///
 abstract class PokemonRepository{
   Future<Either<MyError,PokemonList>> getPokemonFromServer(int cuantos);
-  Future<Either<MyError, PokemonInfo>> getPokemonInfoFromServer(String url);
+  Future<Either<MyError, Pokemon>> getPokemonInfoFromServer(String url);
 }
 
 class PokemonRepositoryImpl implements PokemonRepository{
@@ -24,7 +23,7 @@ class PokemonRepositoryImpl implements PokemonRepository{
   }
 
   @override
-  Future<Either<MyError, PokemonInfo>> getPokemonInfoFromServer(String url) async{
+  Future<Either<MyError, Pokemon>> getPokemonInfoFromServer(String url) async{
     return await serviceLocator<PokemonRemoteSource>().getPokemonInfoFromServer(url);
   }
 

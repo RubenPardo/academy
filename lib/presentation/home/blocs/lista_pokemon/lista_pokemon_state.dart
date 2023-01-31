@@ -1,4 +1,6 @@
-import 'package:academy/data/model/pokemon_model.dart';
+
+
+import 'package:academy/data/model/pokemon_info_model.dart';
 
 abstract class ListaPokemonState{}
 

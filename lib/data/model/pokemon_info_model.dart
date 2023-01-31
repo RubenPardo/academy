@@ -1,26 +1,27 @@
 import 'package:academy/core/utility.dart';
 
-typedef PokemonInfoList = List<PokemonInfo>;
+typedef PokemonList = List<Pokemon>;
 
-class PokemonInfo{
+class Pokemon {
 
-   final int id;
-   final String name;
-   final String firstPokemonType;
-   final String secondPokemonType;
-   final String sprite;
+  bool fav = false;
+  final String name;
+  final int id;
+  final String firstPokemonType;
+  final String secondPokemonType;
+  final String sprite;
 
   /*Pokemon(Map<String, Object?> json){
     print("Pokemon.fromJSON");
     print(json);
   }*/
 
-  PokemonInfo(this.id, this.name, this.firstPokemonType, this.secondPokemonType, this.sprite);
+  Pokemon(this.id, this.name, this.firstPokemonType, this.secondPokemonType, this.sprite);
 
   
-  factory PokemonInfo.fromJson(Map<String, dynamic> json) {
+  factory Pokemon.fromJson(Map<String, dynamic> json) {
     try{
-      return PokemonInfo(
+      return Pokemon(
         json['id'] as int,
         Utility.capitalize(json['name']),
         Utility.capitalize(json['types'][0]['type']['name']),
@@ -31,8 +32,8 @@ class PokemonInfo{
     }
   }
 
-  factory PokemonInfo.dummy(){
-    return PokemonInfo(
+  factory Pokemon.dummy(){
+    return Pokemon(
       1,
       "este nombre prueba",
       "water",

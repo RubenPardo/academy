@@ -1,5 +1,5 @@
 import 'package:academy/core/my_error.dart';
-import 'package:academy/data/model/pokemon_model.dart';
+import 'package:academy/data/model/pokemon_info_model.dart';
 import 'package:either_dart/either.dart';
 
 import '../../core/service_locator.dart';

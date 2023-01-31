@@ -1,5 +1,6 @@
 
 
+import 'package:academy/core/utility.dart';
 import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_bloc.dart';
 import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_event.dart';
 import 'package:academy/presentation/home/screens/list_all_pokemon_screen.dart';
@@ -17,6 +18,8 @@ class HomepageScreen extends StatefulWidget {
 class _HomepageScreenState extends State<HomepageScreen> {
 
   int _selectedIndex = 0;
+  String _selectedPokemonType1 = "";
+  String _selectedPokemonType2 = "";
   
   static const List<Widget> _widgetOptions = <Widget>[
     ListAllPokemonScreen(),
@@ -42,6 +45,13 @@ class _HomepageScreenState extends State<HomepageScreen> {
     return Scaffold
     (
       appBar: AppBar(
+        actions: [
+          IconButton(
+            icon:const Icon(Icons.filter_alt_rounded),
+            onPressed: (){
+              _showBottomSheetMenu();
+            })
+        ],
           title: const Text('Pokedex'),
         ),
       floatingActionButton: FloatingActionButton(
@@ -71,5 +81,65 @@ class _HomepageScreenState extends State<HomepageScreen> {
     );
   }
   
+  void _showBottomSheetMenu(){
+    showModalBottomSheet<void>(
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                padding: const EdgeInsets.only(top:64),
+                height: 200,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      
+                     Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          const Text("Tipo1"),
+                          const SizedBox(height: 8,),
+                          DropdownButton<String>(
+                            value: _selectedPokemonType1,
+                            items: Utility.pokemonTypes().map((e) => DropdownMenuItem(value: e,child: Text(Utility.capitalize(e)),)).toList(), 
+                            onChanged: (item){
+                                setState(() {
+                                  _selectedPokemonType1 = item!;
+                                });
+                                context.read<ListaPokemonBloc>().add(ListaPokemonFiltrar(tipo1: _selectedPokemonType1, tipo2: _selectedPokemonType2));
+                                Navigator.pop(context);
+                              }
+                            ),
+                          ],
+                        )
+                      ),
+                      Padding(
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        children: [
+                          const Text("Tipo2"),
+                          const SizedBox(height: 8,),
+                          DropdownButton<String>(
+                            value: _selectedPokemonType2,
+                            items: Utility.pokemonTypes().map((e) => DropdownMenuItem(value: e,child: Text(Utility.capitalize(e)),)).toList(), 
+                            onChanged: (item){
+                                setState(() {
+                                  _selectedPokemonType2 = item!;
+                                });
+                                context.read<ListaPokemonBloc>().add(ListaPokemonFiltrar(tipo1: _selectedPokemonType1, tipo2: _selectedPokemonType2));
+                                Navigator.pop(context);
+                              }
+                            ),
+                          ],
+                        )
+                      ),
+                      
+                    ],
+                  ),
+                
+              );
+          }, );
+  }
   
+ 
 }

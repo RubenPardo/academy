@@ -28,6 +28,12 @@ class _HomepageScreenState extends State<HomepageScreen> {
       appBar: AppBar(
           title: const Text('Pokedex'),
         ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: (){
+          context.read<HomepageBloc>().add(HomePageAddElement());
+        },
+      ),
       body: BlocConsumer<HomepageBloc, HomepageState>(
         listener: (context, state) {
           if(state is HomePageErrorState){

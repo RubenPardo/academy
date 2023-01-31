@@ -24,6 +24,7 @@ class PokemonItemBloc extends Bloc<PokemonItemEvent, PokemonItemState> {
       );
       
     },);
+    
    
   }
 }

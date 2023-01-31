@@ -17,7 +17,7 @@ class Pokemon{
   Pokemon(this.name, this.url);
 
 
-  factory Pokemon.dummy() => Pokemon("nombre-prueba","https://pokeapi.co/api/v2/pokemon/1/");
+  factory Pokemon.dummy() => Pokemon("nombre-prueba","https://pokeapi.co/api/v2/pokemon/25/");
   factory Pokemon.fromJSON(Map<String,dynamic> json) 
   {
     return Pokemon(

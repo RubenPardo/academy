@@ -6,7 +6,7 @@ import '../../core/service_locator.dart';
 import '../repositories/pokemon_repository.dart';
 
 class GetPokemonListFromServer {
-  Future<Either<MyError, PokemonList>> getProductsFromServer() {
-    return serviceLocator<PokemonRepository>().getPokemonFromServer();
+  Future<Either<MyError, PokemonList>> getProductsFromServer({required int cuantos}) {
+    return serviceLocator<PokemonRepository>().getPokemonFromServer(cuantos);
   }
 }

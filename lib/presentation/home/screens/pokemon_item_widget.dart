@@ -21,10 +21,13 @@ class PokemonItemWidget extends StatefulWidget  {
 
 class _PokemonItemWidgetState extends State<PokemonItemWidget>{
 
-  PokemonItemBloc _pokemonItemBloc = PokemonItemBloc();
+  final PokemonItemBloc _pokemonItemBloc = PokemonItemBloc();
 
   @override
   void initState() {
+    super.initState();
+      print("EVENTO -- INIT STATE ${widget.pokemon.url}");
+      print("EVENTO -- ---------------");
     _pokemonItemBloc.add(PokemonItemFetchData(url:widget.pokemon.url));
   }
 

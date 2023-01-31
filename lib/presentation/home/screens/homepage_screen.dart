@@ -1,4 +1,6 @@
 
+import 'dart:async';
+
 import 'package:academy/presentation/home/blocs/homepage/homepage_bloc.dart';
 import 'package:academy/presentation/home/blocs/homepage/homepage_event.dart';
 import 'package:academy/presentation/home/blocs/homepage/homepage_state.dart';
@@ -16,10 +18,20 @@ class HomepageScreen extends StatefulWidget {
 }
 
 class _HomepageScreenState extends State<HomepageScreen> {
+
+  Completer<Null>? _completerFetchData;
+
   @override
   void initState() {
     super.initState();
-    context.read<HomepageBloc>().add(HomePageFetchData(),); // ---------------------- iniciar fetch de datos
+    context.read<HomepageBloc>().add(HomePageFetchData(isRefresh: false),); // ---------------------- iniciar fetch de datos
+  }
+
+   Future<Null> _onRefresh() {
+    _completerFetchData = Completer<Null>();
+    context.read<HomepageBloc>().add(HomePageFetchData(isRefresh: true));
+    // _completerFetchData.complete() se hace en el listener
+    return _completerFetchData!.future;
   }
 
   @override
@@ -39,12 +51,19 @@ class _HomepageScreenState extends State<HomepageScreen> {
         listener: (context, state) {
           if(state is HomePageErrorState){
             Utility.showSnackBar(context,state.mensaje);
+          }else if(state is HomePageLoadedState){
+            if(_completerFetchData !=null){
+              _completerFetchData!.complete();
+              _completerFetchData = null;
+            }
           }
         },
         builder: (context, state) {
           if(state is HomePageLoadingState){
             return _buildLoadingState();
           }else if(state is HomePageLoadedState){
+             return _buildLoadedState(state.pokemonList);
+          }else if(state is HomePageRefreshingState){
              return _buildLoadedState(state.pokemonList);
           }else{
             return const Center(); // Cuando haya error llegara aqui?
@@ -60,11 +79,14 @@ class _HomepageScreenState extends State<HomepageScreen> {
   
   /// devuelve un listview builder con los items de la lista de pokemon
   Widget _buildLoadedState(PokemonList pokemonList) {
-    return ListView.builder(
-      itemCount: pokemonList.length,
-      itemBuilder: (context, index) {
-        return PokemonItemWidget(pokemon: pokemonList[index]);
-      },
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: ListView.builder(
+        itemCount: pokemonList.length,
+        itemBuilder: (context, index) {
+          return PokemonItemWidget(pokemon: pokemonList[index]);
+        },
+      )
     );
   }
 }

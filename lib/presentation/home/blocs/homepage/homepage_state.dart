@@ -4,6 +4,10 @@ abstract class HomepageState{}
 
 class HomePageInitialState extends HomepageState{}
 class HomePageLoadingState extends HomepageState{}
+class HomePageRefreshingState extends HomepageState{
+  final PokemonList pokemonList;
+  HomePageRefreshingState({required this.pokemonList});
+}
 class HomePageErrorState extends HomepageState{
   final String mensaje;
   HomePageErrorState({required this.mensaje});

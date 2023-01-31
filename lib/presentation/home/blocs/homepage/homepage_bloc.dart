@@ -10,10 +10,18 @@ class HomepageBloc extends Bloc<HomepageEvent, HomepageState> {
 
       PokemonList _pokemonList = []; // para mantener de forma temporal nuestra lista, así podremos añadir nuevos elementos, podriamos hacerlo con una BD interna
       
+      const int cuantosPokemon = 3;
+
+
       on<HomePageFetchData>(
         (event,emit) async{
+          if(event.isRefresh){
+            emit(HomePageRefreshingState(pokemonList:_pokemonList)); // ------------------------------------------------- Empezamos a cargar
+          }else{
             emit(HomePageLoadingState()); // ------------------------------------------------- Empezamos a cargar
-            var result = await serviceLocator<GetPokemonListFromServer>().getProductsFromServer();
+          }
+          
+            var result = await serviceLocator<GetPokemonListFromServer>().getProductsFromServer(cuantos: cuantosPokemon);
             result.fold(
               (error){
                 emit(HomePageErrorState(mensaje:error.mensaje));// --------------------------- return Error
@@ -31,8 +39,9 @@ class HomepageBloc extends Bloc<HomepageEvent, HomepageState> {
         (event,emit) async{
           // aqui podriamos usar un caso de uso en el caso de que fuera 
           //pillarlo de la BD o de Remoto, en este caso no haria falta
-            _pokemonList.add(Pokemon.dummy());
-            emit(HomePageLoadedState(pokemonList: _pokemonList));// --------------------------- return PokemonList
+          // HAY MUCHOS para ver que se añaden pedir menos pokemons
+           _pokemonList.add(Pokemon.dummy());
+          emit(HomePageLoadedState(pokemonList: _pokemonList));// --------------------------- return PokemonList
         }
       );
 

@@ -1,10 +1,11 @@
+import 'package:academy/core/utility.dart';
+
 typedef PokemonInfoList = List<PokemonInfo>;
 
 class PokemonInfo{
 
    final int id;
    final String name;
-   final String order;
    final String firstPokemonType;
    final String secondPokemonType;
    final String sprite;
@@ -14,9 +15,29 @@ class PokemonInfo{
     print(json);
   }*/
 
-  PokemonInfo(this.id, this.name, this.order, this.firstPokemonType, this.secondPokemonType, this.sprite);
+  PokemonInfo(this.id, this.name, this.firstPokemonType, this.secondPokemonType, this.sprite);
 
-  //factory Pokemon.fromJson(Map<String, Object?> json) => Pokemon(json);
-  factory PokemonInfo.dummy() => PokemonInfo(1,"nombre-prueba","001","water","fire","https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/2.png");
+  
+  factory PokemonInfo.fromJson(Map<String, dynamic> json) {
+    try{
+      return PokemonInfo(
+        json['id'] as int,
+        Utility.capitalize(json['name']),
+        Utility.capitalize(json['types'][0]['type']['name']),
+        (json['types'] as List).length>1 ? Utility.capitalize(json['types'][1]['type']['name']) : "",
+        json['sprites']['other']['official-artwork']['front_default'] ?? "");
+    }catch(e){
+      throw Exception(e);
+    }
+  }
+
+  factory PokemonInfo.dummy(){
+    return PokemonInfo(
+      1,
+      "este nombre prueba",
+      "water",
+      "fire",
+      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png");
+  }
   
 }

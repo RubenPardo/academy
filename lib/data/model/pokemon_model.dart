@@ -13,14 +13,18 @@ class Pokemon{
    final String name;
    final String url;
 
-  /*Pokemon(Map<String, Object?> json){
-    print("Pokemon.fromJSON");
-    print(json);
-  }*/
 
   Pokemon(this.name, this.url);
 
-  //factory Pokemon.fromJson(Map<String, Object?> json) => Pokemon(json);
+
   factory Pokemon.dummy() => Pokemon("nombre-prueba","https://pokeapi.co/api/v2/pokemon/1/");
+  factory Pokemon.fromJSON(Map<String,dynamic> json) 
+  {
+    return Pokemon(
+       json['name'] ?? "",
+       json['url'] ?? ""
+    );
+  }
+    
   
 }

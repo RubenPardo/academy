@@ -10,4 +10,17 @@ class Utility{
                   ),
                 );
   }
+
+
+  static TextStyle cardTitleStyle =TextStyle(
+                  color: Colors.grey[800],
+                  fontWeight: FontWeight.w900,
+                  fontStyle: FontStyle.italic,
+                  fontFamily: 'Open Sans',
+                  fontSize: 32);
+
+  static String capitalize(String string) {
+    return "${string[0].toUpperCase()}${string.substring(1).toLowerCase()}";
+  }
+
 }

@@ -1,9 +1,7 @@
+import 'package:academy/core/service_locator.dart';
 import 'package:academy/data/model/pokemon_model.dart';
-import 'package:academy/domain/repositories/pokemon_repository.dart';
+import 'package:academy/domain/usescases/get_pokemon_list_use_case.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../core/service_locator.dart';
-import '../../../domain/usescases/get_pokemon_list_use_case.dart';
 import 'homepage_event.dart';
 import 'homepage_state.dart';
 
@@ -40,6 +38,4 @@ class HomepageBloc extends Bloc<HomepageEvent, HomepageState> {
 
 
   }
-
-
 }

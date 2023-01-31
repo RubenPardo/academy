@@ -1,12 +1,13 @@
-import 'package:academy/presentation/home/blocs/homepage_event.dart';
+
+import 'package:academy/presentation/home/blocs/homepage/homepage_bloc.dart';
+import 'package:academy/presentation/home/blocs/homepage/homepage_event.dart';
+import 'package:academy/presentation/home/blocs/homepage/homepage_state.dart';
 import 'package:academy/presentation/home/screens/pokemon_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../core/utility.dart';
 import '../../../data/model/pokemon_model.dart';
-import '../blocs/homepage_bloc.dart';
-import '../blocs/homepage_state.dart';
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({Key? key}) : super(key: key);

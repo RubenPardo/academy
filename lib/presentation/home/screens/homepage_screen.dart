@@ -1,15 +1,12 @@
 
-import 'dart:async';
 
-import 'package:academy/presentation/home/blocs/homepage/homepage_bloc.dart';
-import 'package:academy/presentation/home/blocs/homepage/homepage_event.dart';
-import 'package:academy/presentation/home/blocs/homepage/homepage_state.dart';
-import 'package:academy/presentation/home/screens/pokemon_item_widget.dart';
+import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_bloc.dart';
+import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_event.dart';
+import 'package:academy/presentation/home/screens/list_all_pokemon_screen.dart';
+import 'package:academy/presentation/home/screens/list_fav_pokemon_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/utility.dart';
-import '../../../data/model/pokemon_model.dart';
 
 class HomepageScreen extends StatefulWidget {
   const HomepageScreen({Key? key}) : super(key: key);
@@ -19,19 +16,25 @@ class HomepageScreen extends StatefulWidget {
 
 class _HomepageScreenState extends State<HomepageScreen> {
 
-  Completer<Null>? _completerFetchData;
+  int _selectedIndex = 0;
+  
+  static const List<Widget> _widgetOptions = <Widget>[
+    ListAllPokemonScreen(),
+    ListFavPokemonScreen(),
+  ];
+
+  
 
   @override
   void initState() {
     super.initState();
-    context.read<HomepageBloc>().add(HomePageFetchData(isRefresh: false),); // ---------------------- iniciar fetch de datos
+    context.read<ListaPokemonBloc>().add(ListaPokemonFetchData(isRefresh: false),); // ---------------------- iniciar fetch de datos
   }
 
-   Future<Null> _onRefresh() {
-    _completerFetchData = Completer<Null>();
-    context.read<HomepageBloc>().add(HomePageFetchData(isRefresh: true));
-    // _completerFetchData.complete() se hace en el listener
-    return _completerFetchData!.future;
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -44,49 +47,29 @@ class _HomepageScreenState extends State<HomepageScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: (){
-          context.read<HomepageBloc>().add(HomePageAddElement());
+          context.read<ListaPokemonBloc>().add(ListaPokemonAddElement());
         },
       ),
-      body: BlocConsumer<HomepageBloc, HomepageState>(
-        listener: (context, state) {
-          if(state is HomePageErrorState){
-            Utility.showSnackBar(context,state.mensaje);
-          }else if(state is HomePageLoadedState){
-            if(_completerFetchData !=null){
-              _completerFetchData!.complete();
-              _completerFetchData = null;
-            }
-          }
-        },
-        builder: (context, state) {
-          if(state is HomePageLoadingState){
-            return _buildLoadingState();
-          }else if(state is HomePageLoadedState){
-             return _buildLoadedState(state.pokemonList);
-          }else if(state is HomePageRefreshingState){
-             return _buildLoadedState(state.pokemonList);
-          }else{
-            return const Center(); // Cuando haya error llegara aqui?
-          }
-        },
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.list),
+            label: 'Todos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite),
+            label: 'Favoritos',
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
+      ),
+      body: Center(  
+        child: _widgetOptions.elementAt(_selectedIndex),  
       )
     );
   }
   
-  Widget _buildLoadingState() {
-    return const Center(child: CircularProgressIndicator());
-  }
   
-  /// devuelve un listview builder con los items de la lista de pokemon
-  Widget _buildLoadedState(PokemonList pokemonList) {
-    return RefreshIndicator(
-      onRefresh: _onRefresh,
-      child: ListView.builder(
-        itemCount: pokemonList.length,
-        itemBuilder: (context, index) {
-          return PokemonItemWidget(pokemon: pokemonList[index]);
-        },
-      )
-    );
-  }
 }

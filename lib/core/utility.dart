@@ -19,6 +19,9 @@ class Utility{
                   fontFamily: 'Open Sans',
                   fontSize: 32);
 
+  static const TextStyle optionStyle =
+      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
+
   static String capitalize(String string) {
     return "${string[0].toUpperCase()}${string.substring(1).toLowerCase()}";
   }

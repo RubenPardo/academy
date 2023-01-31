@@ -10,8 +10,9 @@ typedef PokemonList = List<Pokemon>;
 class Pokemon{
 
  
-   final String name;
-   final String url;
+  final String name;
+  final String url;
+  bool fav = false;
 
 
   Pokemon(this.name, this.url);

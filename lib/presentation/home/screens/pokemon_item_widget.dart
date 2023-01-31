@@ -1,5 +1,7 @@
 import 'package:academy/core/utility.dart';
 import 'package:academy/data/model/pokemon_info_model.dart';
+import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_bloc.dart';
+import 'package:academy/presentation/home/blocs/lista_pokemon/lista_pokemon_event.dart';
 import 'package:academy/presentation/home/blocs/pokemon_item/pokemon_item_bloc.dart';
 import 'package:academy/presentation/home/blocs/pokemon_item/pokemon_item_event.dart';
 import 'package:academy/presentation/home/blocs/pokemon_item/pokemon_item_state.dart';
@@ -26,8 +28,6 @@ class _PokemonItemWidgetState extends State<PokemonItemWidget>{
   @override
   void initState() {
     super.initState();
-      print("EVENTO -- INIT STATE ${widget.pokemon.url}");
-      print("EVENTO -- ---------------");
     _pokemonItemBloc.add(PokemonItemFetchData(url:widget.pokemon.url));
   }
 
@@ -78,17 +78,21 @@ class _PokemonItemWidgetState extends State<PokemonItemWidget>{
     );
   }
 
-  // TODO cambiar a boton
   Widget _buildFavoriteButton() {
-  return const Align(
+  return  Align(
     alignment: Alignment.topRight,
-    child: Padding(
-      padding: EdgeInsets.all(8),
-      child: Icon(
-          Icons.favorite_border,
-          color: Colors.redAccent,
-          size: 40,
+    child: GestureDetector(
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+            widget.pokemon.fav ? Icons.favorite : Icons.favorite_border,
+            color:  Colors.redAccent,
+            size: 40,
+          ),
         ),
+        onTap: () {
+          context.read<ListaPokemonBloc>().add(ListaPokemonAddFav(pokemon: widget.pokemon));
+        },
       )
     );
   }

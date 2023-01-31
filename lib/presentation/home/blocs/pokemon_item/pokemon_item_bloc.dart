@@ -1,6 +1,7 @@
 
 
 import 'package:academy/core/service_locator.dart';
+import 'package:academy/data/model/pokemon_info_model.dart';
 import 'package:academy/domain/usescases/get_infor_pokemon_use_case.dart';
 import 'package:academy/presentation/home/blocs/pokemon_item/pokemon_item_event.dart';
 import 'package:academy/presentation/home/blocs/pokemon_item/pokemon_item_state.dart';
@@ -9,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class PokemonItemBloc extends Bloc<PokemonItemEvent, PokemonItemState> {
   PokemonItemBloc() : super(PokemonItemInitialState()) {
 
+  
 
     on<PokemonItemFetchData>((event, emit) async{
       emit(PokemonItemLoadingState());
@@ -24,7 +26,8 @@ class PokemonItemBloc extends Bloc<PokemonItemEvent, PokemonItemState> {
       );
       
     },);
-    
+
+   
    
   }
 }

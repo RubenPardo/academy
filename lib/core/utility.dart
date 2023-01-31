@@ -36,6 +36,7 @@ class Utility{
     return [
       "",
       "poison",
+      "bug",
       "flying",
       "fire",
       "water",

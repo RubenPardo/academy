@@ -12,14 +12,14 @@ import 'package:either_dart/either.dart';
 /// crear uno comun para las capas superiores a domain y hacer aqui un mapeo.
 ///
 abstract class PokemonRepository{
-  Future<Either<MyError,PokemonList>> getPokemonFromServer(int cuantos);
+  Future<Either<MyError,PokemonList>> getPokemonFromServer(int cuantos, int desde);
   Future<Either<MyError, Pokemon>> getPokemonInfoFromServer(String url);
 }
 
 class PokemonRepositoryImpl implements PokemonRepository{
   @override
-  Future<Either<MyError, PokemonList>> getPokemonFromServer(int cuantos) async{
-    return await serviceLocator<PokemonRemoteSource>().getPokemonFromServer(cuantos);
+  Future<Either<MyError, PokemonList>> getPokemonFromServer(int cuantos,int desde) async{
+    return await serviceLocator<PokemonRemoteSource>().getPokemonFromServer(cuantos, desde);
   }
 
   @override

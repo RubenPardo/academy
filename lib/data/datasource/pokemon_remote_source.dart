@@ -6,7 +6,7 @@ import '../../core/my_error.dart';
 import 'package:either_dart/either.dart';
 
 abstract class PokemonRemoteSource {
-  Future<Either<MyError, PokemonList>> getPokemonFromServer(int cuantos);
+  Future<Either<MyError, PokemonList>> getPokemonFromServer(int cuantos,int desde);
   Future<Either<MyError, Pokemon>> getPokemonInfoFromServer(String url);
 }
 
@@ -15,12 +15,12 @@ class PokemonRemoteSourceImpl implements PokemonRemoteSource{
 
 
   @override
-  Future<Either<MyError, PokemonList>> getPokemonFromServer(int cuantos) async{
+  Future<Either<MyError, PokemonList>> getPokemonFromServer(int cuantos,int desde) async{
   
     try{
       final Request request = serviceLocator<Request>();
 
-      final response = await request.get("pokemon?limit=$cuantos&offset=0");
+      final response = await request.get("pokemon?limit=$cuantos&offset=$desde");
 
       if (response.statusCode == 200) {
         PokemonList pokemonList = [];

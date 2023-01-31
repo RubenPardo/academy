@@ -16,7 +16,7 @@ class ListaPokemonBloc extends Bloc<ListaPokemonEvent, ListaPokemonState> {
        String tipo1 = "";
        String tipo2 = "";
        int cuantosPokemon = 10; // cuantos pokemon pedir a la api
-
+      bool _isFetchinNewPokemon = false;
 
       on<ListaPokemonFetchData>(
         (event,emit) async{
@@ -27,7 +27,7 @@ class ListaPokemonBloc extends Bloc<ListaPokemonEvent, ListaPokemonState> {
             emit(ListaPokemonLoadingState()); // ------------------------------------------------- Empezamos a cargar
           }
           
-            var result = await serviceLocator<GetPokemonListFromServer>().getProductsFromServer(cuantos: cuantosPokemon);
+            var result = await serviceLocator<GetPokemonListFromServer>().getProductsFromServer(cuantos: cuantosPokemon, desde: 0);
             result.fold(
               (error){
                 emit(ListaPokemonErrorState(mensaje:error.mensaje));// --------------------------- return Error
@@ -43,12 +43,24 @@ class ListaPokemonBloc extends Bloc<ListaPokemonEvent, ListaPokemonState> {
       
       on<ListaPokemonAddElement>(
         (event,emit) async{
-          // aqui podriamos usar un caso de uso en el caso de que fuera 
-          //pillarlo de la BD o de Remoto, en este caso no haria falta
-          // HAY MUCHOS para ver que se añaden pedir menos pokemons
-           _pokemonListTodos.add(Pokemon.dummy());
-           _pokemonListFiltrada = _filtrarPokemon(tipo1, tipo2,_pokemonListTodos);
-          emit(ListaPokemonLoadedState(pokemonList: _pokemonListTodos,pokemonListFav: _pokemonListFavoritos));// --------------------------- return PokemonList
+          if(!_isFetchinNewPokemon){
+            _isFetchinNewPokemon = true; // para evitar que se pidan repetidos
+           var result = await serviceLocator<GetPokemonListFromServer>().getProductsFromServer(cuantos: 1, desde: cuantosPokemon);
+            result.fold(
+              (error){
+                emit(ListaPokemonErrorState(mensaje:"No se pudo añadir un nuevo elemento"));// --------------------------- return Error
+              }, 
+              (pokemonList) {
+                cuantosPokemon++; // la peticion ha ido perfecto sumamos uno a cuantos
+                _isFetchinNewPokemon = false; // permitir volver a pulsar
+                _pokemonListTodos.add(pokemonList.first);// ------------ lo guardamos localmente a la lista 
+                _pokemonListFiltrada = _filtrarPokemon(tipo1, tipo2,_pokemonListTodos);
+                emit(ListaPokemonLoadedState(pokemonList: _pokemonListFiltrada, pokemonListFav: _pokemonListFavoritos));// --------------------------- return PokemonList
+              }
+            );
+          }
+         
+           
         }
       );
 
@@ -82,9 +94,6 @@ class ListaPokemonBloc extends Bloc<ListaPokemonEvent, ListaPokemonState> {
   }
 
   List<Pokemon> _filtrarPokemon(String tipo1, String tipo2, List<Pokemon> listaAFiltrar){
-
-    print("FILTRAR $tipo1 y $tipo2");
-    print("FILTRAR se va a filtrar $listaAFiltrar");
     // si hay un filtro --
     List<Pokemon> listaFiltrada = listaAFiltrar;
     if(tipo1 == "" && tipo2 == ""){

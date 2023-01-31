@@ -1,4 +1,5 @@
-import 'package:academy/features/homepage/presentation/screens/homepage_screen.dart';
+import 'package:academy/presentation/home/blocs/homepage_bloc.dart';
+import 'package:academy/presentation/home/screens/homepage_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,7 +10,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        
+        BlocProvider(
+          create: (_) => HomepageBloc(),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
